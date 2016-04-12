@@ -1,4 +1,4 @@
-RPC Bundle for Symfony2
+(EARLY ALPHA VERSION) RPC Bundle for Symfony2
 ===
 
 ### MO\RPCBundle: RPC-enabled Symfony2 services from Symfony2 container
