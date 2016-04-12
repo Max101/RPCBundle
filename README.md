@@ -14,9 +14,9 @@ This bundle enables you:
 ## Installation
 
 * Use [Composer](https://getcomposer.org/) to install this bundle:
-
+```
     composer require mo/rpc-bundle
-
+```
 * Add the bundle in your application kernel:
 
 ```php
@@ -53,16 +53,16 @@ mo.rpc.run:
 1. Create a new service in the Symfony2 container and add the **rpc.service**
 
 ```yaml
-    # ------------------------------------------------------------------------
-    # DEMO RPC Service
-    # ------------------------------------------------------------------------
-    mo.rpc.service:
-        class: MO\RPCBundle\Domain\Service\Demo\DemoService
-        arguments:
-            - '0.0.1'
-            - '@?doctrine.dbal.default_connection'
-        tags:
-            - { name: rpc.service }
+# ------------------------------------------------------------------------
+# DEMO RPC Service
+# ------------------------------------------------------------------------
+mo.rpc.service:
+    class: MO\RPCBundle\Domain\Service\Demo\DemoService
+    arguments:
+        - '0.0.1'
+        - '@?doctrine.dbal.default_connection'
+    tags:
+        - { name: rpc.service }
 ```
 
 
