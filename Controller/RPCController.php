@@ -1,7 +1,5 @@
 <?php
 
-namespace MO\RPCBundle\Controller;
-
 /*
  * (c) Mitja Orlic <mitja.orlic@gmail.com>
  *
@@ -9,6 +7,7 @@ namespace MO\RPCBundle\Controller;
  * with this source code in the file LICENSE.
  */
 
+namespace MO\RPCBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,14 +20,13 @@ class RPCController extends Controller
 {
     public function runAction(Request $request)
     {
-        $RPCContainer = $this->get('mo.rpc.metadata');
+        $RPCHandler = $this->get('mo.rpc.handler');
 
         $serviceName = $request->get('service', 'mo.rpc.service');
         $method      = $request->get('method', null);
-        $arguments   = $request->get('arguments', null);
+        $arguments   = $request->get('arguments', []);
 
-        $result = $RPCContainer->isValidRequest($serviceName,$method,$arguments);
-
+        $result = $RPCHandler->handle($serviceName, $method, $arguments);
 
         return new JsonResponse($result);
     }
@@ -38,7 +36,9 @@ class RPCController extends Controller
         $metadata = $this->get('mo.rpc.metadata');
 
         // Will render a documentation listing all services available and methods
-        $parameters = [];
+        $parameters = [
+            'services' => $metadata->getllMetadata()
+        ];
 
         return $this->render('RPCBundle::documentation.html.twig', $parameters);
     }

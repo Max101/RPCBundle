@@ -1,5 +1,52 @@
-<html>
-<body>
-lorem ipsum
-</body>
-</html>
+{% extends '@WebProfiler/Profiler/base.html.twig' %}
+
+{% block body %}
+
+    <div id="summary">
+        {% block summary %}
+                <div class="status">
+                    <div class="container">
+                        <h2 class="break-long-words">
+                            RPC Services
+                        </h2>
+                    </div>
+                </div>
+        {% endblock %}
+    </div>
+
+    <div id="content" class="container">
+        <div id="main">
+            <div id="collector-wrapper">
+                <div id="collector-content">
+                    {{ include('@WebProfiler/Profiler/base_js.html.twig') }}
+
+                    {% for service, methods in services %}
+                        {% for method, definition in methods %}
+                            <div>
+                                <p><b>Service:</b> {{ service }}</p>
+                                <p><b>Class:</b> {{ definition.className }}</p>
+                                <p><b>Class Method:</b> {{ definition.method }}</p>
+                                <p><b>Callable Method:</b> {{ method }}</p>
+                                <p><b>Arguments:</b> [ {{ definition.parameters | join }} ]</p>
+                            </div>
+                            <hr/>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="sidebar">
+
+                <div id="sidebar-shortcuts">
+                    <div class="shortcuts">
+                        {% for service, method in services %}
+                            <a class="sf-toggle" data-toggle-selector="#{{ service }}" data-toggle-initial="display">
+                                {{ service }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * (c) Mitja Orlic <mitja.orlic@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace MO\RPCBundle\Domain\Service\Utility;
 
-use MO\RPCBundle\Domain\Exception\RPCServiceNotFoundException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author Mitja Orlic <mitja.orlic@dlabs.si>
@@ -11,26 +18,24 @@ class RPCHandler
 {
     /** @var Metadata */
     private $metadata;
-
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * @param array  $services
-     * @param string $errorMessage
-     * @param bool   $explicit
+     * RPCHandler constructor.
+     *
+     * @param Metadata           $metadata
+     * @param ContainerInterface $container
      */
-    public function __construct(
-        array $services = [],
-        $errorMessage = 'The given service [%s] is not available! Available services are [%s]',
-        $explicit = true
-    ) {
-        $this->services       = $services;
-        $this->errorMessage   = $errorMessage;
-        $this->explicit       = $explicit;
-        $this->currentService = key($services);
+    public function __construct(ContainerInterface $container, Metadata $metadata)
+    {
+        $this->metadata  = $metadata;
+        $this->container = $container;
     }
 
+
     /**
-     *
+     * Will handle an RPC request, validating that the given service exists and method is callable
      *
      * @param string $serviceName
      * @param string $methodName
@@ -38,15 +43,24 @@ class RPCHandler
      *
      * @return mixed
      */
-    public function handle($serviceName, $methodName = null, $arguments = null)
+    public function handle($serviceName, $methodName = null, $arguments = [])
     {
-        $metadata = $this->isValidRequest($serviceName, $methodName);
+        $metadata = $this->metadata->getMetadata($serviceName, $methodName);
 
-        $service = new \StdClass();
+        $service = $this->container->get($metadata->getServiceName());
 
-        return call_user_func_array([$service, $methodName], $arguments);
+        $methodName = $metadata->getMethod();
+
+        try {
+            $result = call_user_func_array([$service, $methodName], $arguments);
+        } catch (\Exception $e) {
+            dump($e);
+            die;
+        }
+
+
+        return $result;
     }
-
 
 
 }

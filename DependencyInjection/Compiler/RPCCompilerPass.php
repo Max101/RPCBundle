@@ -1,15 +1,20 @@
 <?php
 
+/*
+ * (c) Mitja Orlic <mitja.orlic@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace MO\RPCBundle\DependencyInjection\Compiler;
 
-use MO\RPCBundle\Domain\Service\RPCServiceDefinition;
+use MO\RPCBundle\Domain\RPCServiceDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
- * @author  Mitja Orlic <mitja.orlic@dlabs.si>
+ * This Compiler Pass will look for tagged services and register them as RPC services
  */
 class RPCCompilerPass implements CompilerPassInterface
 {
@@ -37,10 +42,8 @@ class RPCCompilerPass implements CompilerPassInterface
 
         if ($rpcServices) {
 
-//            $serviceReferences = [];
             $definitions = [];
             foreach ($rpcServices as $serviceId => $tags) {
-//                $serviceReferences[$serviceId] = new Reference($serviceId);
 
                 $className = $container->getDefinition($serviceId)->getClass();
 
@@ -63,16 +66,14 @@ class RPCCompilerPass implements CompilerPassInterface
                     }
                 }
 
-                $definitions[$serviceId]['_default'] = !$defaultMethodService ? reset($definitions) : $defaultMethodService;
+                $definitions[$serviceId]['_default'] = !$defaultMethodService
+                    ? reset($definitions[$serviceId])
+                    : $defaultMethodService;
             }
 
             $metadataService = $container->findDefinition('mo.rpc.metadata');
 
-            $metadataService->addArgument(serialize($definitions));
-
-//            $RPCServiceContainer = $container->getDefinition($this->RPC_SERVICE_CONTAINER_ID);
-
-//            $RPCServiceContainer->addArgument($serviceReferences);
+            $metadataService->addArgument($definitions);
         }
     }
 
@@ -84,6 +85,10 @@ class RPCCompilerPass implements CompilerPassInterface
 
         foreach ($refl->getMethods(\ReflectionMethod::IS_PUBLIC) as $publicMethod) {
 
+            if($publicMethod->isConstructor() || $publicMethod->isAbstract() || $publicMethod->isStatic()){
+                continue;
+            }
+
             $parameters = [];
             foreach ($publicMethod->getParameters() as $parameter) {
                 $parameters[] = $parameter->getName();
@@ -91,7 +96,9 @@ class RPCCompilerPass implements CompilerPassInterface
 
             $methodName = $publicMethod->getName();
 
-            $definitions[$methodName] = new RPCServiceDefinition($serviceId, $className, $methodName, $parameters);
+            $serviceDefinition = new RPCServiceDefinition($serviceId, $className, $methodName, $parameters);
+
+            $definitions[$methodName] = serialize($serviceDefinition);
         }
 
         if (!$definitions) {

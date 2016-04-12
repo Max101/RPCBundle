@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * (c) Mitja Orlic <mitja.orlic@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace MO\RPCBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
