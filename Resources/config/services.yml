@@ -1,0 +1,23 @@
+services:
+    # ------------------------------------------------------------------------
+    # RPC Service container contains all services available for RPC calls
+    # ------------------------------------------------------------------------
+    mo.rpc.container:
+        class: MO\RPCBundle\Domain\Service\Utility\Container
+
+    mo.rpc.metadata:
+        class: MO\RPCBundle\Domain\Service\Utility\Metadata
+
+
+
+    # ------------------------------------------------------------------------
+    # DEMO RPC Service
+    # ------------------------------------------------------------------------
+    mo.rpc.service:
+        class: MO\RPCBundle\Domain\Service\DemoService
+        tags:
+            - { name: rpc.service, default_method: getVer }
+            - { name: rpc.service1, default_method: getVer }
+
+
+

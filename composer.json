@@ -1,0 +1,13 @@
+{
+    "name": "mo/RPCBundle",
+    "description": "RPC Bundle exposes tagged Symfony container services as RPC available methods",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "MO\\RPCBundle\\": "RPCBundle/",
+        }
+    },
+    "target-dir": ".",
+    "require": {
+    }
+}

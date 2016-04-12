@@ -1,0 +1,9 @@
+mo.rpc.run:
+    path: /run
+    methods: [GET]
+    defaults: { _controller: RPCBundle:RPC:run }
+
+mo.rpc.documentation:
+    path: /documentation
+    methods: [GET]
+    defaults: { _controller: RPCBundle:RPC:documentation }
