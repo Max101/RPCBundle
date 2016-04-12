@@ -51,7 +51,6 @@ mo.rpc.run:
 ## Usage
 
 1. Create a new service in the Symfony2 container and add the **rpc.service**
-   in the `Action\` namespace of your bundle:
 
 ```yaml
     # ------------------------------------------------------------------------
